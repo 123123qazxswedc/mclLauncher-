@@ -1,7 +1,7 @@
 # MCL 启动器
 
-一个 **零第三方依赖**（纯 Python 标准库 + Tkinter）的 Minecraft 启动器：
-自己实现版本清单解析、库与资源下载、Fabric 加载器安装、启动参数拼装与离线登录。
+
+
 
 ## 快速开始
 
@@ -94,11 +94,3 @@ MCL/
 
 ## 打包成 exe（可选）
 
-```powershell
-py -3 -m pip install -U pyinstaller
-py -3 -m PyInstaller --noconfirm --clean --onefile --windowed --name "MCL启动器" mc_launcher.py
-```
-
-生成的 `dist\MCL启动器.exe` 是单文件、免安装的图形界面版（约 12 MB）。
-打包后程序把 exe 所在目录当作工作目录（`mclaunch.project_dir()`），`game/`、`config.json` 都放在 exe 旁边；
-用命令行方式调用 exe 时（例如 `MCL启动器.exe launch -v 1.20.1`）因为没有控制台，输出会写入同目录的 `mcl_cli.log`。
