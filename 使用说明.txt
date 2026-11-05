@@ -1,0 +1,130 @@
+MCL 启动器  v1.18.2
+===================
+
+MCL 启动器的实现只使用 C# 和 x64 汇编：没有 Python、没有 PowerShell 脚本。
+双击「MCL启动器.exe」打开图形界面，不需要安装 Python / .NET 运行时（Windows 自带 .NET Framework 4.x）。
+
+第一次使用
+----------
+1. 「游戏版本」选一个版本（如 1.20.1）；
+2. 「玩家名」填你想用的离线名字；
+3. 想装模组就保持勾选「安装 Fabric API」；
+4. 点「开始游戏」。
+   首次会自动下载游戏本体、依赖库、音效资源，合计约 700 MB；
+   如果本机没有合适的 Java，会自动下载一份 JDK 到 game\runtime（约 190 MB）。
+   进度条下方会显示速度与剩余时间。
+
+新增功能（v1.1 – v1.17）
+-------------------------
+- 构建也改为 C#：tools\BuildTool.exe 负责汇编检查、编译、自测和单文件合并，
+  默认嵌入 x64 汇编版 SHA-1，删除 build.ps1 / merge.ps1。
+- 自动 Java：找不到满足版本要求的 Java 时，自动从 Corretto / Microsoft OpenJDK /
+  Adoptium 下载并解压到 game\runtime，支持断点续传和重试；
+  「设置」里可以关闭。
+- 存档管理：右上角「存档」可列出世界（名称/最后游玩/大小/模式/版本），
+  单个或全部备份成 zip（backups\saves），从备份还原；还原时同名存档会改名
+  `.mcl-old-时间` 保留，不会被直接覆盖。右键存档还能复制、导出 zip、删除，
+  「导入存档…」可直接吃别人的存档 zip。
+- 服务器状态：服务器列表自动查询在线状态、MOTD、人数、延迟和版本，
+  双击照旧一键进服。
+- 资源包 / 光影：右上角「资源包」管理 resourcepacks 和 shaderpacks，
+  支持导入 zip、启用/禁用、删除，也能从 Modrinth 搜索下载资源包和光影。
+- 首次扫描：第一次打开会问是否扫描本机 Minecraft，找到的版本带 `[本地]`
+  加入版本列表，并统计每个版本的模组数量；PCL 版本隔离目录也能识别。
+  右上角「本地版本」可以随时重新扫描。
+- 模组检索：模组管理里可以按名称筛选已装模组；「按名称在线查找…」会带着
+  名称去 Modrinth 搜索，查询默认走 MCIM 镜像（失败自动回官方源）。
+- 正版登录：点玩家名右边的「正版登录」，在浏览器完成 Microsoft 登录后把
+  `oauth20_desktop.srf?code=…` 回调地址粘回窗口。登录后启动游戏使用正版
+  UUID / access token，token 过期会自动刷新；「退出正版登录」回到离线模式。
+  刷新令牌保存在 config.json，公用电脑请记得退出。
+- 工具菜单：「截图管理」可预览/打开/删除游戏截图；「实例导入 / 导出」把
+  整个实例目录打成 zip；「游玩统计 / 日志诊断」显示累计启动次数和时长，
+  并读取 latest.log / crash-reports 找内存不足、Java 版本、模组依赖、Mixin
+  冲突等常见错误。存档右键还支持 1.20+ 的「进入此存档」。
+- Java / 网络：工具菜单里的「Java 运行时 / 网络代理」可查看本机和启动器
+  安装的 Java，安装 Java 8/17/21、设为默认、删除启动器安装的版本，以及
+  设置 HTTP 代理（如 http://127.0.0.1:7890）。
+- 自动备份：设置里可打开「启动前自动备份存档」，并按每个存档保留的份数
+  自动清理旧备份；命令行可用 `saves prune --keep N`。
+- 界面：统一深色主题、圆角按钮、暗色列表/滚动条、加大的标题和状态栏，
+  主界面重新排了间距；各窗口顶栏和底部按钮也统一成同一套样式。
+- 模组中文名：模组管理和 Modrinth 搜索都显示「中文名 / 原名」两列，
+  内置常见模组译名；右键模组管理里的模组可以手动设置中文名，
+  也可以点「联网补全中文名」到 MC 百科查询缺失译名，结果保存在
+  启动器目录的 mod_names.json，下次启动仍然生效。
+- 模组依赖检查：工具菜单里可检查缺失的前置模组、被禁用的依赖和重复
+  modId；Fabric API 自带的 fabric-* 子模块不会误报，结果可复制。
+- 实例操作：实例导入/导出窗口支持重命名和复制，命令行对应
+  `instances rename` / `instances copy`。
+- CurseForge：下载 Mod 窗口右上角可切换 Modrinth / CurseForge，
+  CurseForge 通过镜像免 API Key 搜索和下载，并自动安装必需前置；
+  作者禁止第三方下载的项目会提示无法下载。
+- 多账号：右上角账号按钮打开账号管理，可保存多个微软正版账号和
+  离线账号，双击切换；账号保存在 accounts.json。
+- 实例设置：工具菜单「实例设置…」可给每个实例单独设置内存、Java、
+  JVM 参数、游戏参数和窗口大小，切换实例时自动应用。
+- 在线整合包：工具菜单「在线整合包市场…」可切换 Modrinth / CurseForge，
+  下载 .mrpack 或 CurseForge .zip 后自动进入安装流程；也可以选本地文件。
+- 服务器历史：服务器列表记录最近进入时间和进入次数，并显示「最近」列。
+- 世界重命名：存档右键「重命名世界…」可改显示名，保留 level.dat
+  的 NBT 标签类型，不改存档文件夹名。
+- 服务器收藏：服务器右键可收藏，收藏项排在最前。
+- 截图复制：截图管理里可把选中截图直接复制到剪贴板。
+- 安全修复：zip 解压增加 zip-slip 校验；登录令牌用 Windows DPAPI
+  加密保存；PinnedGet 校验证书域名；TLS 只启用 1.2。
+- 启动修复：JVM 参数会补齐并去重 -cp / -Djava.library.path；
+  下载 .part 在 416/哈希失败后会清空重下；NBT 世界重命名写回前会回读校验。
+- 正式版 / 测试版：设置里「版本通道」可选正式版、测试版（快照）或全部；
+  构建时 `BuildTool.exe -Beta` 会生成带 BETA 标识的测试版 exe（1.18.2-beta.1），
+  与正式版 1.18.2-cs 分开。
+- 实例加载器类型：instance.json 现在记录 loader_type，Fabric / Forge /
+  NeoForge / 原版实例切换时不会互相覆盖；旧实例会自动识别。
+- 修复：直接进入存档的版本判断、Fabric 加载器版本静默回退、下载文件
+  重复哈希、Java 版本探测无缓存、加载器列表无本地兜底等问题。
+
+文件位置
+--------
+- 游戏文件：exe 同目录下的 game\（versions / libraries / assets / mods / logs）
+- 自动下载的 Java：game\runtime\java-8 / java-17 / java-21
+- 存档备份：game\backups\saves
+- 配置：exe 同目录下的 config.json（可直接编辑，也可在界面里改）
+- 换游戏目录：点界面上的「更改…」
+
+下载 Mod / 资源包 / 光影
+------------------------
+点右上角「下载 Mod…」搜索 Mod，下载到 game\mods（自动带上必需的前置模组）。
+点「资源包」窗口里的「下载…」可以搜索并下载资源包或光影。
+
+命令行（可选）
+--------------
+MCL启动器-cli.exe launch -v 1.20.1 --username Steve --memory 4096 --detach
+MCL启动器-cli.exe scan
+MCL启动器-cli.exe login
+MCL启动器-cli.exe stats
+MCL启动器-cli.exe instances export "实例名" "D:\实例.zip"
+MCL启动器-cli.exe instances import "D:\实例.zip"
+MCL启动器-cli.exe --game-dir "D:\.minecraft" launch -v "Fabulously Optimized" --local --launch-dir "D:\.minecraft\versions\Fabulously Optimized" --dry-run
+MCL启动器-cli.exe servers ping mc.hypixel.net
+MCL启动器-cli.exe packs list
+MCL启动器-cli.exe packs install faithful --kind resourcepack
+MCL启动器-cli.exe packs install complementary --kind shader
+MCL启动器-cli.exe saves list
+MCL启动器-cli.exe saves backup "新的世界"
+MCL启动器-cli.exe saves restore "新的世界-20261027-190113.zip"
+MCL启动器-cli.exe java list
+MCL启动器-cli.exe java install --major 17
+注意：全局参数（--game-dir / --workers / --official）要写在子命令前面。
+
+常见问题
+--------
+- 需要 Java：1.17 要 16+，1.18–1.20.4 要 17+，1.20.5+ 要 21+；
+  启动器会自动挑选，找不到就自动下载。
+- 下载很慢：换「下载源」，或直接重复点一次（只补下缺的文件）。
+- 崩溃：看 game\logs\mcl.log 和 game\logs\latest.log。
+详细说明见 README.md。
+
+免责声明
+--------
+本启动器为第三方工具，与 Mojang / Microsoft 无关；请通过官方渠道获取 Minecraft
+并遵守最终用户许可协议。使用本工具产生的风险由使用者自行承担。
